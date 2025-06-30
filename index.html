@@ -1,1 +1,743 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gaming Community - System Zgłoszeń</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+  /* Reset & basics */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin:0; padding:0;
+    font-family: 'Orbitron', sans-serif;
+    background: #0a0a1a;
+    color: #eee;
+    overflow-x: hidden;
+    transition: background-color 0.5s, color 0.5s;
+  }
+  a {
+    color: #00fff7;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  a:hover {
+    color: #ff3b3b;
+    text-shadow: 0 0 8px #ff3b3b;
+  }
+
+  /* Neon starry animated background */
+  body::before {
+    content: "";
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background:
+      radial-gradient(2px 2px at 20% 30%, #8e44ad, transparent),
+      radial-gradient(1.5px 1.5px at 50% 80%, #9b59b6, transparent),
+      radial-gradient(1.8px 1.8px at 80% 40%, #8e44ad, transparent),
+      radial-gradient(1.3px 1.3px at 35% 60%, #9b59b6, transparent),
+      radial-gradient(2.5px 2.5px at 75% 20%, #8e44ad, transparent);
+    background-repeat: repeat;
+    animation: stars-move 60s linear infinite;
+    pointer-events:none;
+    z-index: -1;
+  }
+  @keyframes stars-move {
+    0% {background-position: 0 0, 0 0, 0 0, 0 0, 0 0;}
+    100% {background-position: 10000px 10000px, 5000px 5000px, 7000px 7000px, 4000px 4000px, 9000px 9000px;}
+  }
+
+  /* Container & layout */
+  #container {
+    max-width: 900px;
+    margin: 60px auto 60px auto;
+    padding: 20px;
+    background: rgba(10, 10, 26, 0.85);
+    border-radius: 15px;
+    box-shadow: 0 0 20px #8e44ad;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  header img {
+    width: 120px;
+    filter: drop-shadow(0 0 5px #9b59b6);
+  }
+  header h1 {
+    margin: 10px 0 5px 0;
+    font-size: 2.5rem;
+    text-shadow: 0 0 12px #8e44ad;
+  }
+  header p {
+    font-size: 1.1rem;
+    color: #bbb;
+  }
+
+  /* Toggle Dark/Light Mode */
+  #toggleTheme {
+    position: fixed;
+    top: 15px; right: 15px;
+    background: #8e44ad;
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #9b59b6;
+    transition: background-color 0.3s;
+    z-index: 100;
+  }
+  #toggleTheme:hover {
+    background: #6c3483;
+  }
+
+  /* Navigation Sidebar for Mobile */
+  #sidebarToggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #8e44ad;
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #9b59b6;
+    z-index: 100;
+    display: none;
+  }
+  @media(max-width: 768px) {
+    #sidebarToggle {
+      display: block;
+    }
+  }
+  nav {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100%;
+    width: 250px;
+    background: rgba(15,15,40,0.95);
+    padding-top: 70px;
+    box-shadow: 2px 0 10px #8e44ad;
+    transform: translateX(-260px);
+    transition: transform 0.3s ease;
+    z-index: 90;
+  }
+  nav.show {
+    transform: translateX(0);
+  }
+  nav ul {
+    list-style: none;
+    padding: 0;
+  }
+  nav ul li {
+    margin: 15px 0;
+    text-align: center;
+  }
+  nav ul li a {
+    font-size: 1.3rem;
+    color: #ddd;
+    display: block;
+    padding: 12px 0;
+    border-radius: 12px;
+    transition: background-color 0.3s;
+  }
+  nav ul li a:hover {
+    background: #8e44ad;
+    color: white;
+    text-shadow: 0 0 8px #9b59b6;
+  }
+
+  /* Sections */
+  section {
+    margin-bottom: 50px;
+  }
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 0 0 8px #8e44ad;
+  }
+  p, label {
+    font-size: 1rem;
+  }
+
+  /* Form styling */
+  form {
+    background: #111133;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px #8e44ad;
+  }
+  input[type="text"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #222244;
+    color: #eee;
+    font-size: 1rem;
+    resize: vertical;
+    transition: box-shadow 0.3s;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    box-shadow: 0 0 10px #9b59b6;
+  }
+
+  label {
+    display: block;
+    margin-top: 10px;
+  }
+
+  /* Priority colors */
+  .priority-low {
+    color: #2ecc71; /* zielony */
+    font-weight: bold;
+  }
+  .priority-normal {
+    color: #bdc3c7; /* szary */
+    font-weight: bold;
+  }
+  .priority-urgent {
+    color: #e74c3c; /* czerwony */
+    font-weight: bold;
+  }
+
+  /* Button */
+  button, input[type="submit"] {
+    background: #8e44ad;
+    border: none;
+    color: white;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 12px #9b59b6;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  button:hover, input[type="submit"]:hover {
+    background: #9b59b6;
+    box-shadow: 0 0 20px #b08ee5;
+  }
+  button:disabled {
+    background: #555555;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* Spinner */
+  .spinner {
+    border: 4px solid #eee;
+    border-top: 4px solid #9b59b6;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  @keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+  }
+
+  /* Image previews */
+  #imagePreview {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  #imagePreview img {
+    max-width: 100px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px #9b59b6;
+  }
+
+  /* Animated highlight on buttons and links */
+  button:hover, a:hover {
+    animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% {text-shadow: 0 0 8px #9b59b6;}
+    50% {text-shadow: 0 0 20px #e0aaff;}
+  }
+
+  /* Notification */
+  #notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #8e44ad;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #9b59b6;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    font-weight: bold;
+    z-index: 110;
+  }
+  #notification.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* FAQ styles */
+  .faq-item {
+    background: #222244;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #8e44ad;
+    transition: background-color 0.3s;
+  }
+  .faq-item:hover {
+    background: #333366;
+  }
+  .faq-answer {
+    display: none;
+    margin-top: 8px;
+    color: #ccc;
+  }
+  .faq-item.active .faq-answer {
+    display: block;
+  }
+
+  /* Stats */
+  #stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    background: #111133;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #8e44ad;
+  }
+  #stats div {
+    flex: 1;
+  }
+  #stats div h3 {
+    font-size: 2.2rem;
+    margin-bottom: 5px;
+    color: #9b59b6;
+  }
+  #stats div p {
+    font-size: 1.1rem;
+    color: #ccc;
+  }
+
+  /* Copy Discord Link */
+  #copyDiscord {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  #copyDiscord input {
+    flex: 1;
+    background: #222244;
+    border-radius: 8px;
+    padding: 8px;
+    color: #eee;
+    border: none;
+  }
+  #copyDiscord button {
+    padding: 8px 15px;
+    font-size: 1rem;
+  }
+
+  /* Time and Date */
+  #timeDate {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #bbb;
+  }
+
+</style>
+</head>
+<body>
+
+<button id="sidebarToggle">☰ Menu</button>
+<button id="toggleTheme">Tryb Jasny</button>
+
+<nav id="sidebar">
+  <ul>
+    <li><a href="#formSection">Formularz</a></li>
+    <li><a href="#infoSection">Informacje</a></li>
+    <li><a href="#faqSection">FAQ</a></li>
+    <li><a href="#statsSection">Statystyki</a></li>
+  </ul>
+</nav>
+
+<div id="container">
+  <header>
+    <img src="https://i.imgur.com/QgCSy4d.png" alt="Logo Społeczności" />
+    <h1>Gaming Community</h1>
+    <p>Profesjonalny system zgłoszeń i wsparcia</p>
+  </header>
+
+  <div id="timeDate"></div>
+
+  <section id="formSection">
+    <h2>Formularz zgłoszenia</h2>
+    <form id="ticketForm" autocomplete="off">
+      <label for="username">Nick użytkownika:</label>
+      <input type="text" id="username" name="username" required maxlength="30" placeholder="Twój nick..." />
+
+      <label for="email">Email (opcjonalnie):</label>
+      <input type="email" id="email" name="email" placeholder="Twój email..." />
+
+      <label for="priority">Priorytet zgłoszenia:</label>
+      <select id="priority" name="priority" required>
+        <option value="low" class="priority-low">Niski (zielony)</option>
+        <option value="normal" selected class="priority-normal">Normalny (szary)</option>
+        <option value="urgent" class="priority-urgent">Pilny (czerwony)</option>
+      </select>
+
+      <label for="message">Treść zgłoszenia (max 500 znaków):</label>
+      <textarea id="message" name="message" rows="5" maxlength="500" required placeholder="Opisz swój problem..."></textarea>
+      <div id="charCount">0 / 500</div>
+
+      <label>Dodaj załączniki (max 3 pliki, tylko obrazy lub PDF/ZIP):</label>
+      <input type="file" id="attachments" name="attachments" accept="image/*,application/pdf,application/zip" multiple />
+
+      <div id="imagePreview"></div>
+
+      <label id="quizQuestionLabel" style="margin-top:20px;">Quiz: Ile to 3 + 4?</label>
+      <input type="text" id="quizAnswer" placeholder="Podaj wynik" required />
+      <small id="quizTriesInfo" style="color:#ccc;">Pozostało prób: 3</small>
+
+      <input type="submit" id="submitBtn" value="Wyślij zgłoszenie" />
+      <span id="spinner" style="display:none;" class="spinner"></span>
+    </form>
+
+    <div id="copyDiscord">
+      <input type="text" readonly value="https://discord.gg/7prNChKHnY" id="discordLink" />
+      <button id="copyBtn">Kopiuj link Discord</button>
+    </div>
+  </section>
+
+  <section id="infoSection">
+    <h2>Informacje</h2>
+    <p>System zgłoszeń jest w pełni automatyczny i chroniony przed spamem poprzez quiz matematyczny oraz limit zgłoszeń na godzinę. W zgłoszeniu widoczne będą: nick użytkownika, priorytet, czas zgłoszenia oraz treść wraz z załącznikami. Wszystkie zgłoszenia są przesyłane bezpośrednio do Discord webhook.</p>
+  </section>
+
+  <section id="faqSection">
+    <h2>FAQ</h2>
+    <div class="faq-item">
+      <div class="faq-question">Jak długo trwa odpowiedź na zgłoszenie?</div>
+      <div class="faq-answer">Zazwyczaj odpowiedź następuje w ciągu 24 godzin, w zależności od priorytetu zgłoszenia.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">Czy mogę wysłać więcej niż jedno zgłoszenie?</div>
+      <div class="faq-answer">Tak, ale obowiązuje limit 1 zgłoszenia na godzinę, aby uniknąć spamu.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">Jakie pliki mogę załączyć?</div>
+      <div class="faq-answer">Akceptujemy obrazy, PDF i pliki ZIP, max 3 pliki na zgłoszenie.</div>
+    </div>
+  </section>
+
+  <section id="statsSection">
+    <h2>Statystyki</h2>
+    <div id="stats">
+      <div>
+        <h3 id="totalTickets">0</h3>
+        <p>Zgłoszeń ogółem</p>
+      </div>
+      <div>
+        <h3 id="activeUsers">0</h3>
+        <p>Aktywnych użytkowników</p>
+      </div>
+      <div>
+        <h3 id="pendingTickets">0</h3>
+        <p>Zgłoszeń oczekujących</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="socialMedia" style="text-align:center; margin-top: 40px;">
+    <h2>Znajdź nas w social media</h2>
+    <a href="https://facebook.com" target="_blank" aria-label="Facebook" title="Facebook" style="margin:0 10px; font-size: 2rem; color:#3b5998;">&#xf09a;</a>
+    <a href="https://youtube.com" target="_blank" aria-label="YouTube" title="YouTube" style="margin:0 10px; font-size: 2rem; color:#ff0000;">&#xf167;</a>
+    <a href="https://tiktok.com" target="_blank" aria-label="TikTok" title="TikTok" style="margin:0 10px; font-size: 2rem; color:#000000;">&#xe07b;</a>
+    <a href="https://instagram.com" target="_blank" aria-label="Instagram" title="Instagram" style="margin:0 10px; font-size: 2rem; color:#e1306c;">&#xf16d;</a>
+  </section>
+</div>
+
+<div id="notification"></div>
+
+<script>
+  // Variables for theme and elements
+  const toggleThemeBtn = document.getElementById('toggleTheme');
+  const body = document.body;
+  const sidebarToggleBtn = document.getElementById('sidebarToggle');
+  const sidebar = document.getElementById('sidebar');
+  const form = document.getElementById('ticketForm');
+  const charCount = document.getElementById('charCount');
+  const messageInput = document.getElementById('message');
+  const attachmentsInput = document.getElementById('attachments');
+  const imagePreview = document.getElementById('imagePreview');
+  const quizQuestionLabel = document.getElementById('quizQuestionLabel');
+  const quizAnswer = document.getElementById('quizAnswer');
+  const quizTriesInfo = document.getElementById('quizTriesInfo');
+  const submitBtn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('spinner');
+  const notification = document.getElementById('notification');
+  const discordLinkInput = document.getElementById('discordLink');
+  const copyBtn = document.getElementById('copyBtn');
+  const timeDateDisplay = document.getElementById('timeDate');
+
+  // Discord webhook URL
+  const webhookURL = 'https://discord.com/api/webhooks/1389289861755699371/3kSC8ybs9rKAi4184SGxaTbkoQ3RZN5jzo4iA4IqU7X43wdOi6beIx6rMapjLZiJtS3q';
+
+  // Priority colors map
+  const priorityColors = {
+    low: '#2ecc71',
+    normal: '#bdc3c7',
+    urgent: '#e74c3c'
+  };
+
+  // Quiz questions pool
+  const quizQuestions = [
+    { q: "3 + 4", a: "7" },
+    { q: "5 - 2", a: "3" },
+    { q: "6 * 2", a: "12" },
+    { q: "10 / 2", a: "5" },
+    { q: "9 + 6", a: "15" },
+  ];
+
+  // State vars
+  let quizTriesLeft = 3;
+  let currentQuizIndex = 0;
+  let lastSubmissionTime = 0;
+
+  // Initialize theme from localStorage or default dark
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if(savedTheme === 'light') {
+      body.classList.add('light-theme');
+      toggleThemeBtn.textContent = "Tryb Ciemny";
+      body.style.backgroundColor = "#fafafa";
+      body.style.color = "#222";
+    }
+  }
+  initTheme();
+
+  toggleThemeBtn.addEventListener('click', () => {
+    if(body.classList.contains('light-theme')) {
+      // switch to dark
+      body.classList.remove('light-theme');
+      toggleThemeBtn.textContent = "Tryb Jasny";
+      body.style.backgroundColor = "#0a0a1a";
+      body.style.color = "#eee";
+      localStorage.setItem('theme', 'dark');
+    } else {
+      // switch to light
+      body.classList.add('light-theme');
+      toggleThemeBtn.textContent = "Tryb Ciemny";
+      body.style.backgroundColor = "#fafafa";
+      body.style.color = "#222";
+      localStorage.setItem('theme', 'light');
+    }
+  });
+
+  // Sidebar toggle on mobile
+  sidebarToggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('show');
+  });
+
+  // Update character count
+  messageInput.addEventListener('input', () => {
+    charCount.textContent = `${messageInput.value.length} / 500`;
+  });
+
+  // Quiz question setup
+  function setQuizQuestion() {
+    currentQuizIndex = Math.floor(Math.random() * quizQuestions.length);
+    quizQuestionLabel.textContent = `Quiz: Ile to ${quizQuestions[currentQuizIndex].q}?`;
+    quizAnswer.value = '';
+  }
+  setQuizQuestion();
+
+  // Image preview handler
+  attachmentsInput.addEventListener('change', () => {
+    imagePreview.innerHTML = '';
+    const files = attachmentsInput.files;
+    if(files.length > 3) {
+      alert('Możesz dodać maksymalnie 3 pliki.');
+      attachmentsInput.value = '';
+      return;
+    }
+    for(let i=0; i<files.length; i++) {
+      const file = files[i];
+      if(!file.type.startsWith('image/') && file.type !== "application/pdf" && file.type !== "application/zip") {
+        alert('Akceptujemy tylko obrazy, PDF lub ZIP.');
+        attachmentsInput.value = '';
+        imagePreview.innerHTML = '';
+        return;
+      }
+      if(file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.alt = "Podgląd załącznika";
+          imagePreview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  });
+
+  // Copy Discord link
+  copyBtn.addEventListener('click', () => {
+    discordLinkInput.select();
+    discordLinkInput.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(discordLinkInput.value).then(() => {
+      showNotification('Link Discord skopiowany!');
+    });
+  });
+
+  // Show notification
+  function showNotification(message) {
+    notification.textContent = message;
+    notification.style.opacity = '1';
+    setTimeout(() => {
+      notification.style.opacity = '0';
+    }, 2500);
+  }
+
+  // Validate quiz answer
+  function validateQuizAnswer() {
+    const userAnswer = quizAnswer.value.trim();
+    const correctAnswer = quizQuestions[currentQuizIndex].a;
+    if(userAnswer === correctAnswer) {
+      return true;
+    } else {
+      quizTriesLeft--;
+      quizTriesInfo.textContent = `Pozostało prób: ${quizTriesLeft}`;
+      if(quizTriesLeft <= 0) {
+        submitBtn.disabled = true;
+        quizAnswer.disabled = true;
+        showNotification('Przekroczono liczbę prób w quizie!');
+      }
+      return false;
+    }
+  }
+
+  // Rate limit: 1 submission per hour
+  function canSubmit() {
+    const now = Date.now();
+    if(now - lastSubmissionTime < 3600000) { // 1 hour in ms
+      showNotification('Limit zgłoszeń to 1 na godzinę.');
+      return false;
+    }
+    return true;
+  }
+
+  // Form submission handler
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if(!canSubmit()) return;
+
+    if(!validateQuizAnswer()) {
+      showNotification('Niepoprawny wynik quizu.');
+      return;
+    }
+
+    const formData = new FormData(form);
+    const message = formData.get('message').trim();
+    const priority = formData.get('priority');
+    const attachments = attachmentsInput.files;
+
+    if(message.length === 0) {
+      showNotification('Wpisz treść zgłoszenia.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    spinner.style.display = 'inline-block';
+
+    // Prepare data for Discord webhook
+    const embeds = [{
+      title: `Nowe zgłoszenie [${priority.toUpperCase()}]`,
+      description: message,
+      color: priorityColors[priority],
+      timestamp: new Date().toISOString(),
+      footer: {
+        text: `Nick: ${formData.get('nickname')}`
+      }
+    }];
+
+    // Handle attachments upload if any (simulate or real depending on backend)
+    // For now, attachments are not uploaded, just mention count
+    if(attachments.length > 0) {
+      embeds[0].fields = [{
+        name: 'Załączniki',
+        value: `${attachments.length} plik(i) dołączono`
+      }];
+    }
+
+    // Send to Discord webhook
+    try {
+      const response = await fetch(webhookURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ embeds })
+      });
+
+      if(response.ok) {
+        showNotification('Zgłoszenie wysłane pomyślnie!');
+        lastSubmissionTime = Date.now();
+        form.reset();
+        setQuizQuestion();
+        quizTriesLeft = 3;
+        quizTriesInfo.textContent = `Pozostało prób: ${quizTriesLeft}`;
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+        charCount.textContent = '0 / 500';
+        imagePreview.innerHTML = '';
+      } else {
+        showNotification('Błąd podczas wysyłania zgłoszenia.');
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+      }
+    } catch (error) {
+      showNotification('Błąd sieci podczas wysyłania zgłoszenia.');
+      submitBtn.disabled = false;
+      spinner.style.display = 'none';
+    }
+  });
+
+  // Display current time and date in footer
+  function updateTimeDate() {
+    const now = new Date();
+    timeDateDisplay.textContent = now.toLocaleString();
+  }
+  setInterval(updateTimeDate, 1000);
+  updateTimeDate();
+</script>
 
