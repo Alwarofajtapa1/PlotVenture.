@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Zaawansowany Formularz Kontaktowy</title>
 <style>
+  /* --- STYLIZACJA FORMULARZA --- */
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f0f2f5;
@@ -14,7 +15,7 @@
   }
   .container {
     background: white;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
     border-radius: 8px;
     box-shadow: 0 0 12px rgb(0 0 0 / 0.1);
@@ -30,7 +31,7 @@
     margin-bottom: 6px;
     font-weight: 600;
   }
-  select, input[type="text"], input[type="email"], textarea {
+  select, input[type="text"], input[type="email"], textarea, input[type="file"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 18px;
@@ -40,9 +41,26 @@
     resize: vertical;
     transition: border-color 0.3s;
   }
-  select:focus, input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+  select:focus, input[type="text"]:focus, input[type="email"]:focus, textarea:focus, input[type="file"]:focus {
     border-color: #007bff;
     outline: none;
+  }
+  .error-text {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: -12px;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .file-preview {
+    margin-bottom: 15px;
+  }
+  .file-preview img {
+    max-width: 100px;
+    max-height: 100px;
+    margin-right: 10px;
+    vertical-align: middle;
+    border-radius: 5px;
   }
   .priority-low {
     color: #1e7e34;
@@ -103,17 +121,31 @@
   .message.error {
     color: #dc3545;
   }
-  /* Honeypot field (ukryte pole do wykrywania botów) */
+  /* Honeypot */
   .honeypot {
     display: none;
   }
+  /* Google reCAPTCHA v2 Invisible style override */
+  .grecaptcha-badge { visibility: hidden; }
 </style>
+
+<!-- Google Analytics (podstawowa integracja) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXXX-X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-XXXXXXXXX-X');  // <-- Podmień na swój kod GA
+</script>
+
+<!-- Google reCAPTCHA v2 Invisible -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
 <div class="container">
   <h1>Formularz Kontaktowy</h1>
-  <form id="contactForm" autocomplete="off">
+  <form id="contactForm" autocomplete="off" enctype="multipart/form-data">
     <label for="category">Kategoria</label>
     <select id="category" name="category" required>
       <option value="" disabled selected>Wybierz kategorię</option>
@@ -123,6 +155,7 @@
       <option value="Rekrutacja">Rekrutacja</option>
       <option value="Inne">Inne</option>
     </select>
+    <div class="error-text" id="error-category">Proszę wybrać kategorię.</div>
 
     <label for="priority">Priorytet</label>
     <select id="priority" name="priority" required>
@@ -131,114 +164,194 @@
       <option value="Normalny" data-color="#fd7e14">Normalny</option>
       <option value="Wysoki" data-color="#dc3545">Wysoki</option>
     </select>
+    <div class="error-text" id="error-priority">Proszę wybrać priorytet.</div>
 
     <label for="name">Twoje imię</label>
     <input type="text" id="name" name="name" placeholder="Twoje imię" required minlength="2" maxlength="50" />
+    <div class="error-text" id="error-name">Proszę wpisać poprawne imię (2-50 znaków).</div>
 
     <label for="email">Twój email</label>
     <input type="email" id="email" name="email" placeholder="email@example.com" required />
+    <div class="error-text" id="error-email">Proszę podać poprawny adres email.</div>
 
     <label for="message">Wiadomość</label>
     <textarea id="message" name="message" placeholder="Napisz tutaj swoją wiadomość..." rows="5" required minlength="10" maxlength="1000"></textarea>
+    <div class="error-text" id="error-message">Wiadomość musi mieć co najmniej 10 znaków.</div>
+
+    <label for="attachment">Załączniki (obrazki lub dokumenty, max 2MB na plik)</label>
+    <input type="file" id="attachment" name="attachment" accept=".png,.jpg,.jpeg,.pdf,.doc,.docx" multiple />
+    <div class="file-preview" id="filePreview"></div>
+    <div class="error-text" id="error-attachment"></div>
 
     <!-- Honeypot do botów -->
     <input type="text" name="honeypot" id="honeypot" class="honeypot" autocomplete="off" tabindex="-1" />
 
-    <button type="submit" id="submitBtn">Wyślij</button>
+    <!-- Invisible reCAPTCHA -->
+    <button
+      class="g-recaptcha"
+      data-sitekey="TWÓJ_RECAPTCHA_SITE_KEY"
+      data-callback="onSubmit"
+      data-size="invisible"
+      id="submitBtn"
+      type="submit"
+    >Wyślij</button>
+
+    <button type="button" id="resetBtn" style="margin-top:10px; background:#6c757d;">Wyczyść formularz</button>
+
     <div id="responseMessage" class="message"></div>
   </form>
 </div>
 
 <script>
-  const webhookURL = 'https://discord.com/api/webhooks/1389289861755699371/3kSC8ybs9rKAi4184SGxaTbkoQ3RZN5jzo4iA4IqU7X43wdOi6beIx6rMapjLZiJtS3q';
-
+  // Elements
   const form = document.getElementById('contactForm');
   const responseMessage = document.getElementById('responseMessage');
   const submitBtn = document.getElementById('submitBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const fileInput = document.getElementById('attachment');
+  const filePreview = document.getElementById('filePreview');
+  const honeypot = document.getElementById('honeypot');
 
-  // Kolory priorytetów
-  const priorityColors = {
-    'Niski': '#1e7e34',      // zielony
-    'Normalny': '#fd7e14',   // pomarańczowy
-    'Wysoki': '#dc3545'      // czerwony
-  };
+  // Validation helpers
+  function validateEmail(email) {
+    // prosty regex email
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    responseMessage.textContent = '';
-    responseMessage.className = 'message';
-    submitBtn.disabled = true;
+  // Show error function
+  function showError(id, show) {
+    const el = document.getElementById(id);
+    if (show) el.style.display = 'block';
+    else el.style.display = 'none';
+  }
 
-    // Anti-spam - honeypot check
-    if (document.getElementById('honeypot').value !== '') {
-      responseMessage.textContent = 'Wykryto podejrzaną aktywność (spam).';
-      responseMessage.classList.add('error');
-      submitBtn.disabled = false;
-      return;
-    }
-
-    // Pobierz wartości formularza
-    const category = form.category.value;
-    const priority = form.priority.value;
-    const name = form.name.value.trim();
-    const email = form.email.value.trim();
-    const message = form.message.value.trim();
-
-    // Prosta walidacja email (HTML5 już to robi, ale na wszelki wypadek)
-    if (!validateEmail(email)) {
-      responseMessage.textContent = 'Proszę podać poprawny adres email.';
-      responseMessage.classList.add('error');
-      submitBtn.disabled = false;
-      return;
-    }
-
-    // Przygotowanie danych do webhooka Discord (embed)
-    const embed = {
-      title: `Nowa wiadomość - ${category}`,
-      color: parseInt(priorityColors[priority].substring(1), 16),
-      fields: [
-        { name: 'Kategoria', value: category, inline: true },
-        { name: 'Priorytet', value: priority, inline: true },
-        { name: 'Imię', value: name, inline: false },
-        { name: 'Email', value: email, inline: false },
-        { name: 'Wiadomość', value: message.length > 1024 ? message.substring(0, 1021) + '...' : message, inline: false },
-      ],
-      footer: {
-        text: 'Formularz kontaktowy',
-      },
-      timestamp: new Date().toISOString(),
-    };
-
-    const payload = JSON.stringify({ embeds: [embed] });
-
-    try {
-      const res = await fetch(webhookURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: payload,
-      });
-
-      if (res.ok) {
-        responseMessage.textContent = 'Wiadomość została wysłana pomyślnie! Dziękujemy.';
-        responseMessage.classList.add('success');
-        form.reset();
-      } else {
-        throw new Error('Błąd serwera. Spróbuj ponownie później.');
+  // Preview załączników (miniatury)
+  fileInput.addEventListener('change', () => {
+    filePreview.innerHTML = '';
+    const files = fileInput.files;
+    const maxSizeMB = 2;
+    let hasError = false;
+    for (let file of files) {
+      if (file.size > maxSizeMB * 1024 * 1024) {
+        document.getElementById('error-attachment').textContent = `Plik ${file.name} jest większy niż 2MB.`;
+        showError('error-attachment', true);
+        hasError = true;
+        break;
       }
-    } catch (error) {
-      responseMessage.textContent = error.message;
-      responseMessage.classList.add('error');
+      // Podgląd tylko obrazów
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        filePreview.appendChild(img);
+      }
     }
-
-    submitBtn.disabled = false;
+    if (!hasError) {
+      showError('error-attachment', false);
+    }
   });
 
-  function validateEmail(email) {
-    // Prosty regex walidujący email
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email.toLowerCase());
+  // Reset form
+  resetBtn.addEventListener('click', () => {
+    form.reset();
+    filePreview.innerHTML = '';
+    responseMessage.textContent = '';
+    responseMessage.className = 'message';
+    // usuwanie błędów
+    ['error-category', 'error-priority', 'error-name', 'error-email', 'error-message', 'error-attachment'].forEach(id => showError(id, false));
+  });
+
+  // Podświetlanie priorytetu kolorem
+  const prioritySelect = document.getElementById('priority');
+  prioritySelect.addEventListener('change', () => {
+    const val = prioritySelect.value;
+    prioritySelect.style.color = val === 'Niski' ? '#1e7e34' : val === 'Normalny' ? '#fd7e14' : val === 'Wysoki' ? '#dc3545' : '#000';
+  });
+
+  // Formularz submit - walidacja i wysyłka
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Czyszczenie poprzednich błędów
+    ['error-category', 'error-priority', 'error-name', 'error-email', 'error-message', 'error-attachment'].forEach(id => showError(id, false));
+    responseMessage.textContent = '';
+    responseMessage.className = 'message';
+
+    // Sprawdzenie honeypot (bot)
+    if (honeypot.value) {
+      responseMessage.textContent = 'Podejrzana aktywność wykryta.';
+      responseMessage.className = 'message error';
+      return;
+    }
+
+    let valid = true;
+
+    // Walidacje
+    if (!form.category.value) {
+      showError('error-category', true);
+      valid = false;
+    }
+    if (!form.priority.value) {
+      showError('error-priority', true);
+      valid = false;
+    }
+    if (!form.name.value || form.name.value.length < 2 || form.name.value.length > 50) {
+      showError('error-name', true);
+      valid = false;
+    }
+    if (!validateEmail(form.email.value)) {
+      showError('error-email', true);
+      valid = false;
+    }
+    if (!form.message.value || form.message.value.length < 10) {
+      showError('error-message', true);
+      valid = false;
+    }
+    // Załączniki - rozmiar sprawdzany przy podglądzie, można tu dodać
+
+    if (!valid) return;
+
+    // Disabled przycisk i pokaż spinner
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wysyłanie...';
+
+    // Wysyłka formularza z reCAPTCHA
+    grecaptcha.execute();
+
+  });
+
+  // Callback dla reCAPTCHA
+  function onSubmit(token) {
+    // Zbierz dane formularza do FormData (dla plików)
+    const data = new FormData(form);
+    data.append('g-recaptcha-response', token);
+
+    fetch('/submit', {
+      method: 'POST',
+      body: data,
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.success) {
+          responseMessage.textContent = 'Formularz został pomyślnie wysłany. Sprawdź maila, aby potwierdzić zgłoszenie.';
+          responseMessage.className = 'message success';
+          form.reset();
+          filePreview.innerHTML = '';
+        } else {
+          responseMessage.textContent = 'Błąd: ' + (json.message || 'Spróbuj ponownie później.');
+          responseMessage.className = 'message error';
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Wyślij';
+        grecaptcha.reset();
+      })
+      .catch(() => {
+        responseMessage.textContent = 'Wystąpił błąd sieci. Spróbuj ponownie.';
+        responseMessage.className = 'message error';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Wyślij';
+        grecaptcha.reset();
+      });
   }
 </script>
 
