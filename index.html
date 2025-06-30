@@ -1,54 +1,309 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dołącz do Discorda</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discord Społeczność</title>
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #2c2f33;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --accent: #a854ff;
+      --form-bg: rgba(255, 255, 255, 0.05);
+    }
+    
+    [data-theme="light"] {
+      --bg: #fff;
+      --text: #000;
+      --accent: #7b2fff;
+      --form-bg: rgba(0, 0, 0, 0.05);
     }
 
-    h1 {
-      font-size: 2.5rem;
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+      background: rgba(0,0,0,0.7);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      height: 40px;
+    }
+
+    .menu-btn, .theme-toggle {
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin-left: 15px;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 70%;
+      height: 100%;
+      background-color: var(--bg);
+      padding: 40px 20px;
+      transition: 0.3s;
+      z-index: 20;
+    }
+
+    nav.open {
+      left: 0;
+    }
+
+    nav a {
+      display: block;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 1.2rem;
       margin-bottom: 20px;
     }
 
-    a.button {
-      background-color: #5865F2;
-      color: white;
-      text-decoration: none;
-      padding: 15px 30px;
-      border-radius: 10px;
-      font-size: 1.2rem;
-      transition: background 0.3s ease;
+    .container {
+      text-align: center;
+      padding: 60px 20px;
     }
 
-    a.button:hover {
-      background-color: #4752c4;
+    .btn {
+      background-color: var(--accent);
+      color: #fff;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      text-decoration: none;
+      margin: 20px 0;
+      display: inline-block;
+    }
+
+    .socials {
+      font-size: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      background: var(--form-bg);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: left;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    input[type="file"] {
+      background: transparent;
+      padding: 3px;
+    }
+
+    button {
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #8b3fff;
+    }
+
+    #success {
+      display: none;
+      color: lime;
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
     }
 
     footer {
-      margin-top: 40px;
+      text-align: center;
+      margin: 40px 0;
       font-size: 0.9rem;
-      opacity: 0.5;
+      opacity: 0.6;
+    }
+
+    /* Animowane tło gwiazdy fioletowe */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle 2px at 10% 20%, #a854ff, transparent),
+        radial-gradient(circle 1.5px at 30% 40%, #bb66ff, transparent),
+        radial-gradient(circle 2.5px at 50% 10%, #cf7fff, transparent),
+        radial-gradient(circle 1px at 70% 50%, #a854ff, transparent),
+        radial-gradient(circle 1.8px at 80% 80%, #cc88ff, transparent);
+      background-repeat: repeat;
+      animation: starsAnim 20s linear infinite;
+      z-index: 0;
+    }
+    @keyframes starsAnim {
+      0% {background-position: 0 0, 0 0, 0 0, 0 0, 0 0;}
+      100% {background-position: 10000px 10000px, 5000px 7000px, 8000px 4000px, 6000px 3000px, 9000px 9000px;}
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        width: 85%;
+      }
+      header {
+        padding: 15px 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>🎮 Dołącz do naszej społeczności Discord!</h1>
-  <a class="button" href="https://discord.gg/7prNChKHnY" target="_blank">Wejdź na serwer</a>
-  <footer>
-    © 2025   PlotVenture.pl • Niezależna społeczność graczy
-  </footer>
+
+<header>
+  <img src="https://i.imgur.com/QgCSy4d.png" alt="Logo" class="logo" />
+  <div>
+    <i class="fas fa-adjust theme-toggle" onclick="toggleTheme()" title="Przełącz tryb"></i>
+    <i class="fas fa-bars menu-btn" onclick="toggleMenu()" title="Menu"></i>
+  </div>
+</header>
+
+<nav id="sidebar">
+  <a href="#start" onclick="toggleMenu()">Start</a>
+  <a href="#discord" onclick="toggleMenu()">Discord</a>
+  <a href="#zgloszenia" onclick="toggleMenu()">Zgłoszenia</a>
+</nav>
+
+<div class="container" id="start">
+  <h1>Dołącz do naszej społeczności Discord!</h1>
+  <a href="https://discord.gg/7prNChKHnY" class="btn" target="_blank" rel="noopener noreferrer">Dołącz teraz</a>
+  <div class="socials" aria-label="Linki do mediów społecznościowych">
+    <a href="https://facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+    <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+    <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+    <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+  </div>
+</div>
+
+<section id="zgloszenia" class="container">
+  <h2>📩 Formularz zgłoszeniowy</h2>
+  <form id="discordForm" enctype="multipart/form-data">
+    <label for="name">Nick:</label>
+    <input type="text" id="name" name="name" placeholder="Twój nick" required />
+    
+    <label for="message">Wiadomość:</label>
+    <textarea id="message" name="message" rows="5" placeholder="Napisz wiadomość..." required></textarea>
+    
+    <label for="image">Dodaj zrzut ekranu (opcjonalnie):</label>
+    <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/gif" />
+    
+    <button type="submit">Wyślij</button>
+    <div id="success">Wiadomość wysłana!</div>
+  </form>
+</section>
+
+<footer>© 2025 Neon Gaming • Tryb ciemny/jasny + Discord Webhook</footer>
+
+<script>
+  let lastSent = 0;
+  const cooldown = 3600000; // 1h cooldown
+  const history = [];
+  const webhookURL = "https://discord.com/api/webhooks/1389289861755699371/3kSC8ybs9rKAi4184SGxaTbkoQ3RZN5jzo4iA4IqU7X43wdOi6beIx6rMapjLZiJtS3q";
+
+  function toggleMenu() {
+    document.getElementById("sidebar").classList.toggle("open");
+  }
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute("data-theme");
+    document.documentElement.setAttribute("data-theme", current === "light" ? "dark" : "light");
+  }
+
+  document.getElementById("discordForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const now = Date.now();
+    if (now - lastSent < cooldown) {
+      alert("Można wysyłać tylko raz na godzinę.");
+      return;
+    }
+
+    lastSent = now;
+
+    const name = this.name.value.trim();
+    const message = this.message.value.trim();
+    const imageFile = this.image.files[0];
+
+    if (imageFile && imageFile.size > 3 * 1024 * 1024) {
+      alert("Plik jest za duży (max 3MB).");
+      return;
+    }
+
+    history.push({ name, message, time: new Date().toISOString() });
+    console.log("Historia zgłoszeń:", history);
+
+    const payload = {
+      content: `**Zgłoszenie od:** ${name}\n${message}`
+    };
+
+    try {
+      if (!imageFile) {
+        // Wysyłamy JSON, jeśli brak obrazka
+        await fetch(webhookURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        // Wysyłamy formData z plikiem
+        const formData = new FormData();
+        formData.append("payload_json", JSON.stringify(payload));
+        formData.append("file", imageFile, imageFile.name);
+
+        await fetch(webhookURL, {
+          method: "POST",
+          body: formData
+        });
+      }
+      this.reset();
+      document.getElementById("success").style.display = "block";
+    } catch (error) {
+      alert("Coś poszło nie tak, spróbuj ponownie później.");
+      console.error(error);
+    }
+  });
+</script>
+
 </body>
 </html>
