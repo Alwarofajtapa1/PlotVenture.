@@ -1,309 +1,381 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Discord Społeczność</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gaming Społeczność - Formularz zgłoszeń</title>
+<style>
+  :root {
+    --bg-dark: #0a0a23;
+    --bg-light: #fff;
+    --text-dark: #eee;
+    --text-light: #222;
+    --accent: #a259ff;
+    --neon-glow: 0 0 8px #a259ff, 0 0 20px #b87eff;
+  }
+  /* Dark & Light mode */
+  body {
+    margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-dark);
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  body.light {
+    background: var(--bg-light);
+    color: var(--text-light);
+  }
 
-  <!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  /* Neon style */
+  h1, h2, label, button {
+    text-shadow: var(--neon-glow);
+  }
+  button {
+    background: var(--accent);
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+  }
+  button:hover {
+    box-shadow: var(--neon-glow);
+  }
+  input, textarea, select {
+    font-size: 1rem;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    width: 100%;
+    margin-bottom: 15px;
+    background: #222;
+    color: #eee;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  body.light input, body.light textarea, body.light select {
+    background: #fefefe;
+    color: #111;
+    border: 1px solid #ccc;
+  }
 
-  <style>
-    :root {
-      --bg: #000;
-      --text: #fff;
-      --accent: #a854ff;
-      --form-bg: rgba(255, 255, 255, 0.05);
-    }
-    
-    [data-theme="light"] {
-      --bg: #fff;
-      --text: #000;
-      --accent: #7b2fff;
-      --form-bg: rgba(0, 0, 0, 0.05);
-    }
+  /* Container */
+  .container {
+    max-width: 480px;
+    margin: 40px auto;
+    padding: 20px;
+    background: rgba(18, 12, 56, 0.8);
+    border-radius: 10px;
+    box-shadow: var(--neon-glow);
+  }
+  body.light .container {
+    background: #f9f9f9;
+    box-shadow: none;
+  }
 
-    body {
-      margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-      transition: background 0.3s, color 0.3s;
-    }
+  /* Success message */
+  #success {
+    display: none;
+    margin-top: 15px;
+    color: #8fff8f;
+    font-weight: bold;
+    text-align: center;
+    animation: popIn 0.5s ease forwards;
+  }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 25px;
-      background: rgba(0,0,0,0.7);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+  /* Info box */
+  #info {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--accent);
+    line-height: 1.4;
+  }
 
-    .logo {
-      height: 40px;
-    }
+  /* Preview images container */
+  #imagePreview {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+  #imagePreview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: var(--neon-glow);
+    border: 2px solid var(--accent);
+  }
 
-    .menu-btn, .theme-toggle {
-      font-size: 1.5rem;
-      cursor: pointer;
-      margin-left: 15px;
-    }
+  /* Copy Discord link button */
+  #copyDiscord {
+    background: transparent;
+    color: var(--accent);
+    font-weight: bold;
+    border: 2px solid var(--accent);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 15px;
+  }
+  #copyDiscord:hover {
+    background-color: var(--accent);
+    color: #111;
+  }
 
-    nav {
-      position: fixed;
-      top: 0;
-      left: -100%;
-      width: 70%;
-      height: 100%;
-      background-color: var(--bg);
-      padding: 40px 20px;
-      transition: 0.3s;
-      z-index: 20;
-    }
+  /* Character counter */
+  #charCount {
+    font-size: 0.8rem;
+    text-align: right;
+    color: #aaa;
+    margin-top: -12px;
+    margin-bottom: 10px;
+  }
+  body.light #charCount {
+    color: #666;
+  }
 
-    nav.open {
-      left: 0;
-    }
+  /* Music player controls */
+  #musicControl {
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #musicControl button {
+    background: var(--accent);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: var(--neon-glow);
+  }
+  #musicControl input[type="range"] {
+    flex-grow: 1;
+  }
 
-    nav a {
-      display: block;
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-    }
+  /* Animations */
+  @keyframes popIn {
+    from {opacity: 0; transform: scale(0.8);}
+    to {opacity: 1; transform: scale(1);}
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
 
+  /* Hover effect for links */
+  a.social-link {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+  a.social-link:hover {
+    color: #fff;
+    text-shadow: var(--neon-glow);
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
     .container {
-      text-align: center;
-      padding: 60px 20px;
+      margin: 20px 10px;
     }
-
-    .btn {
-      background-color: var(--accent);
-      color: #fff;
-      padding: 12px 30px;
-      font-size: 1.1rem;
-      border-radius: 10px;
-      text-decoration: none;
-      margin: 20px 0;
-      display: inline-block;
-    }
-
-    .socials {
-      font-size: 2rem;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    form {
-      max-width: 400px;
-      margin: 0 auto;
-      background: var(--form-bg);
-      padding: 20px;
-      border-radius: 12px;
-      text-align: left;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      background: #222;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-
-    input[type="file"] {
-      background: transparent;
-      padding: 3px;
-    }
-
-    button {
-      background-color: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #8b3fff;
-    }
-
-    #success {
-      display: none;
-      color: lime;
-      margin-top: 15px;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    footer {
-      text-align: center;
-      margin: 40px 0;
-      font-size: 0.9rem;
-      opacity: 0.6;
-    }
-
-    /* Animowane tło gwiazdy fioletowe */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle 2px at 10% 20%, #a854ff, transparent),
-        radial-gradient(circle 1.5px at 30% 40%, #bb66ff, transparent),
-        radial-gradient(circle 2.5px at 50% 10%, #cf7fff, transparent),
-        radial-gradient(circle 1px at 70% 50%, #a854ff, transparent),
-        radial-gradient(circle 1.8px at 80% 80%, #cc88ff, transparent);
-      background-repeat: repeat;
-      animation: starsAnim 20s linear infinite;
-      z-index: 0;
-    }
-    @keyframes starsAnim {
-      0% {background-position: 0 0, 0 0, 0 0, 0 0, 0 0;}
-      100% {background-position: 10000px 10000px, 5000px 7000px, 8000px 4000px, 6000px 3000px, 9000px 9000px;}
-    }
-
-    @media (max-width: 600px) {
-      nav {
-        width: 85%;
-      }
-      header {
-        padding: 15px 15px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
+<div class="container">
+  <h2>📩 Formularz zgłoszeniowy</h2>
 
-<header>
-  <img src="https://i.imgur.com/QgCSy4d.png" alt="Logo" class="logo" />
-  <div>
-    <i class="fas fa-adjust theme-toggle" onclick="toggleTheme()" title="Przełącz tryb"></i>
-    <i class="fas fa-bars menu-btn" onclick="toggleMenu()" title="Menu"></i>
+  <button id="copyDiscord" title="Kopiuj link Discord">Kopiuj link Discord</button>
+
+  <form id="discordForm" enctype="multipart/form-data" autocomplete="off">
+    <label for="name">Nick:</label>
+    <input type="text" id="name" name="name" placeholder="Twój nick" required />
+
+    <label for="priority">Priorytet zgłoszenia:</label>
+    <select id="priority" name="priority" required>
+      <option value="Normalne" selected>Normalne</option>
+      <option value="Pilne">Pilne</option>
+      <option value="Sugestia">Sugestia</option>
+    </select>
+
+    <label for="message">Wiadomość:</label>
+    <textarea id="message" name="message" rows="5" placeholder="Napisz wiadomość..." maxlength="500" required></textarea>
+    <div id="charCount">0 / 500</div>
+
+    <label for="image">Dodaj zrzuty ekranu (max 3):</label>
+    <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/gif" multiple />
+
+    <div id="imagePreview"></div>
+
+    <label for="quiz">Ile to 4 + 5? (Anti-spam)</label>
+    <input type="number" id="quiz" name="quiz" required placeholder="Twoja odpowiedź" />
+
+    <button type="submit">Wyślij</button>
+    <div id="success">Wiadomość wysłana! 🎉</div>
+  </form>
+
+  <div id="info">
+    <strong>Informacje o zgłoszeniach:</strong><br/>
+    • Zgłoszenia NIE są anonimowe — widoczny będzie Twój podany nick, priorytet oraz treść wiadomości.<br/>
+    • Twoje zgłoszenie (nick, wiadomość, priorytet i ewentualne załączniki) zostanie przesłane bezpośrednio na nasz Discord.<br/>
+    • Możesz wysłać zgłoszenie maksymalnie raz na godzinę, aby zapobiec spamowi.<br/>
+    • Dbamy o bezpieczeństwo Twoich danych i nie udostępniamy ich osobom trzecim.<br/>
+    • Język Twojej przeglądarki jest automatycznie dołączany do zgłoszenia.<br/>
   </div>
-</header>
 
-<nav id="sidebar">
-  <a href="#start" onclick="toggleMenu()">Start</a>
-  <a href="#discord" onclick="toggleMenu()">Discord</a>
-  <a href="#zgloszenia" onclick="toggleMenu()">Zgłoszenia</a>
-</nav>
-
-<div class="container" id="start">
-  <h1>Dołącz do naszej społeczności Discord!</h1>
-  <a href="https://discord.gg/7prNChKHnY" class="btn" target="_blank" rel="noopener noreferrer">Dołącz teraz</a>
-  <div class="socials" aria-label="Linki do mediów społecznościowych">
-    <a href="https://facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-    <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-    <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-    <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+  <div id="musicControl">
+    <button id="musicToggle" title="Play / Pause muzyki">▶️</button>
+    <input type="range" id="musicVolume" min="0" max="1" step="0.05" value="0.5" />
   </div>
 </div>
 
-<section id="zgloszenia" class="container">
-  <h2>📩 Formularz zgłoszeniowy</h2>
-  <form id="discordForm" enctype="multipart/form-data">
-    <label for="name">Nick:</label>
-    <input type="text" id="name" name="name" placeholder="Twój nick" required />
-    
-    <label for="message">Wiadomość:</label>
-    <textarea id="message" name="message" rows="5" placeholder="Napisz wiadomość..." required></textarea>
-    
-    <label for="image">Dodaj zrzut ekranu (opcjonalnie):</label>
-    <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/gif" />
-    
-    <button type="submit">Wyślij</button>
-    <div id="success">Wiadomość wysłana!</div>
-  </form>
-</section>
-
-<footer>© 2025 Neon Gaming • Tryb ciemny/jasny + Discord Webhook</footer>
+<audio id="backgroundMusic" loop src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_2d2db35e56.mp3?filename=relaxing-loop-1209.mp3"></audio>
 
 <script>
-  let lastSent = 0;
-  const cooldown = 3600000; // 1h cooldown
-  const history = [];
-  const webhookURL = "https://discord.com/api/webhooks/1389289861755699371/3kSC8ybs9rKAi4184SGxaTbkoQ3RZN5jzo4iA4IqU7X43wdOi6beIx6rMapjLZiJtS3q";
+  const discordWebhookURL = 'https://discord.com/api/webhooks/1389289861755699371/3kSC8ybs9rKAi4184SGxaTbkoQ3RZN5jzo4iA4IqU7X43wdOi6beIx6rMapjLZiJtS3q';
 
-  function toggleMenu() {
-    document.getElementById("sidebar").classList.toggle("open");
-  }
+  const form = document.getElementById('discordForm');
+  const successMsg = document.getElementById('success');
+  const charCount = document.getElementById('charCount');
+  const imageInput = document.getElementById('image');
+  const imagePreview = document.getElementById('imagePreview');
+  const copyDiscordBtn = document.getElementById('copyDiscord');
+  const quizInput = document.getElementById('quiz');
 
-  function toggleTheme() {
-    const current = document.documentElement.getAttribute("data-theme");
-    document.documentElement.setAttribute("data-theme", current === "light" ? "dark" : "light");
-  }
+  // Music controls
+  const music = document.getElementById('backgroundMusic');
+  const musicToggle = document.getElementById('musicToggle');
+  const musicVolume = document.getElementById('musicVolume');
 
-  document.getElementById("discordForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
+  // Store timestamp of last sent message to limit spam
+  let lastSentTimestamp = 0;
+  const cooldownMs = 60 * 60 * 1000; // 1 hour
 
-    const now = Date.now();
-    if (now - lastSent < cooldown) {
-      alert("Można wysyłać tylko raz na godzinę.");
+  // Update character counter live
+  document.getElementById('message').addEventListener('input', e => {
+    const len = e.target.value.length;
+    charCount.textContent = `${len} / 500`;
+  });
+
+  // Preview images
+  imageInput.addEventListener('change', () => {
+    imagePreview.innerHTML = '';
+    const files = imageInput.files;
+    if (files.length > 3) {
+      alert('Możesz dodać maksymalnie 3 pliki.');
+      imageInput.value = '';
       return;
     }
-
-    lastSent = now;
-
-    const name = this.name.value.trim();
-    const message = this.message.value.trim();
-    const imageFile = this.image.files[0];
-
-    if (imageFile && imageFile.size > 3 * 1024 * 1024) {
-      alert("Plik jest za duży (max 3MB).");
-      return;
-    }
-
-    history.push({ name, message, time: new Date().toISOString() });
-    console.log("Historia zgłoszeń:", history);
-
-    const payload = {
-      content: `**Zgłoszenie od:** ${name}\n${message}`
-    };
-
-    try {
-      if (!imageFile) {
-        // Wysyłamy JSON, jeśli brak obrazka
-        await fetch(webhookURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-      } else {
-        // Wysyłamy formData z plikiem
-        const formData = new FormData();
-        formData.append("payload_json", JSON.stringify(payload));
-        formData.append("file", imageFile, imageFile.name);
-
-        await fetch(webhookURL, {
-          method: "POST",
-          body: formData
-        });
-      }
-      this.reset();
-      document.getElementById("success").style.display = "block";
-    } catch (error) {
-      alert("Coś poszło nie tak, spróbuj ponownie później.");
-      console.error(error);
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) continue;
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.onload = () => URL.revokeObjectURL(img.src);
+      imagePreview.appendChild(img);
     }
   });
-</script>
 
+  // Copy Discord link
+  copyDiscordBtn.addEventListener('click', () => {
+    const discordLink = 'https://discord.gg/7prNChKHnY';
+    navigator.clipboard.writeText(discordLink).then(() => {
+      copyDiscordBtn.textContent = 'Skopiowano!';
+      setTimeout(() => copyDiscordBtn.textContent = 'Kopiuj link Discord', 1500);
+    }).catch(() => alert('Błąd podczas kopiowania linku.'));
+  });
+
+  // Music player
+  musicToggle.addEventListener('click', () => {
+    if (music.paused) {
+      music.play();
+      musicToggle.textContent = '⏸️';
+    } else {
+      music.pause();
+      musicToggle.textContent = '▶️';
+    }
+  });
+  musicVolume.addEventListener('input', () => {
+    music.volume = musicVolume.value;
+  });
+
+  // Form submission
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    // Spam cooldown check
+    if (Date.now() - lastSentTimestamp < cooldownMs) {
+      alert('Możesz wysłać kolejne zgłoszenie dopiero po godzinie.');
+      return;
+    }
+    // Simple quiz check
+    if (parseInt(quizInput.value, 10) !== 9) {
+      alert('Niepoprawna odpowiedź na pytanie antyspam.');
+      quizInput.focus();
+      return;
+    }
+
+    // Validate images count again
+    if (imageInput.files.length > 3) {
+      alert('Możesz dodać maksymalnie 3 pliki.');
+      return;
+    }
+
+    // Prepare data for webhook
+    const name = document.getElementById('name').value.trim();
+    const message = document.getElementById('message').value.trim();
+    const priority = document.getElementById('priority').value;
+    const lang = navigator.language || 'nieznany';
+
+    // Build content string for Discord webhook
+    let content = `**Nowe zgłoszenie:**\n**Nick:** ${name}\n**Priorytet:** ${priority}\n**Język przeglądarki:** ${lang}\n**Wiadomość:**\n${message}`;
+
+    // Upload images as attachments to Discord webhook is complicated in pure frontend.
+    // We'll upload images as base64 and embed in the message as data URLs (limited size)
+    // For production, better to do backend handling or upload images to hosting and link here.
+    if (imageInput.files.length > 0) {
+      content += `\n**Załączniki:**\n`;
+      for (const file of imageInput.files) {
+        // convert to base64 asynchronously
+        const base64 = await fileToBase64(file);
+        content += `\n[obrazek](${base64})`;
+      }
+    }
+
+    // Send webhook message
+    try {
+      const res = await fetch(discordWebhookURL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({content})
+      });
+      if (!res.ok) throw new Error('Błąd sieci');
+      lastSentTimestamp = Date.now();
+      form.reset();
+      imagePreview.innerHTML = '';
+      charCount.textContent = '0 / 500';
+      successMsg.style.display = 'block';
+      successMsg.style.animation = 'popIn 0.5s ease forwards';
+      setTimeout(() => successMsg.style.display = 'none', 3000);
+    } catch (err) {
+      alert('Coś poszło nie tak. Spróbuj ponownie później.');
+    }
+  });
+
+  // Helper to convert file to base64
+  function fileToBase64(file) {
+    return new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = () => res(reader.result);
+      reader.onerror = () => rej();
+      reader.readAsDataURL(file);
+    });
+  }
+</script>
 </body>
 </html>
