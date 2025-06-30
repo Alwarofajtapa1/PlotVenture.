@@ -3,741 +3,343 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Gaming Community - System Zgłoszeń</title>
+<title>Formularz Zgłoszeń - PlotVenture</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
-  /* Reset & basics */
-  * {
-    box-sizing: border-box;
-  }
+  /* Podstawowy reset i styl */
   body {
-    margin:0; padding:0;
-    font-family: 'Orbitron', sans-serif;
-    background: #0a0a1a;
+    margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212; /* tryb ciemny */
     color: #eee;
-    overflow-x: hidden;
-    transition: background-color 0.5s, color 0.5s;
-  }
-  a {
-    color: #00fff7;
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  a:hover {
-    color: #ff3b3b;
-    text-shadow: 0 0 8px #ff3b3b;
-  }
-
-  /* Neon starry animated background */
-  body::before {
-    content: "";
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background:
-      radial-gradient(2px 2px at 20% 30%, #8e44ad, transparent),
-      radial-gradient(1.5px 1.5px at 50% 80%, #9b59b6, transparent),
-      radial-gradient(1.8px 1.8px at 80% 40%, #8e44ad, transparent),
-      radial-gradient(1.3px 1.3px at 35% 60%, #9b59b6, transparent),
-      radial-gradient(2.5px 2.5px at 75% 20%, #8e44ad, transparent);
-    background-repeat: repeat;
-    animation: stars-move 60s linear infinite;
-    pointer-events:none;
-    z-index: -1;
-  }
-  @keyframes stars-move {
-    0% {background-position: 0 0, 0 0, 0 0, 0 0, 0 0;}
-    100% {background-position: 10000px 10000px, 5000px 5000px, 7000px 7000px, 4000px 4000px, 9000px 9000px;}
-  }
-
-  /* Container & layout */
-  #container {
-    max-width: 900px;
-    margin: 60px auto 60px auto;
-    padding: 20px;
-    background: rgba(10, 10, 26, 0.85);
-    border-radius: 15px;
-    box-shadow: 0 0 20px #8e44ad;
   }
   header {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  header img {
-    width: 120px;
-    filter: drop-shadow(0 0 5px #9b59b6);
+    background: #1f1f1f;
+    padding: 1rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
   }
   header h1 {
-    margin: 10px 0 5px 0;
-    font-size: 2.5rem;
-    text-shadow: 0 0 12px #8e44ad;
+    font-weight: 700; font-size: 1.6rem; letter-spacing: 2px;
   }
-  header p {
-    font-size: 1.1rem;
-    color: #bbb;
+  nav a {
+    color: #ddd; text-decoration: none; margin-left: 1.2rem;
+    font-weight: 600;
   }
-
-  /* Toggle Dark/Light Mode */
-  #toggleTheme {
-    position: fixed;
-    top: 15px; right: 15px;
-    background: #8e44ad;
-    border: none;
-    color: white;
-    font-weight: bold;
-    padding: 10px 15px;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 0 10px #9b59b6;
-    transition: background-color 0.3s;
-    z-index: 100;
+  nav a:hover {
+    color: #4caf50;
   }
-  #toggleTheme:hover {
-    background: #6c3483;
+  main {
+    max-width: 700px;
+    margin: 2rem auto;
+    background: #222;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #080;
   }
-
-  /* Navigation Sidebar for Mobile */
-  #sidebarToggle {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background: #8e44ad;
-    border: none;
-    color: white;
-    font-weight: bold;
-    padding: 10px 15px;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 0 10px #9b59b6;
-    z-index: 100;
-    display: none;
-  }
-  @media(max-width: 768px) {
-    #sidebarToggle {
-      display: block;
-    }
-  }
-  nav {
-    position: fixed;
-    top: 0; left: 0;
-    height: 100%;
-    width: 250px;
-    background: rgba(15,15,40,0.95);
-    padding-top: 70px;
-    box-shadow: 2px 0 10px #8e44ad;
-    transform: translateX(-260px);
-    transition: transform 0.3s ease;
-    z-index: 90;
-  }
-  nav.show {
-    transform: translateX(0);
-  }
-  nav ul {
-    list-style: none;
-    padding: 0;
-  }
-  nav ul li {
-    margin: 15px 0;
-    text-align: center;
-  }
-  nav ul li a {
-    font-size: 1.3rem;
-    color: #ddd;
-    display: block;
-    padding: 12px 0;
-    border-radius: 12px;
-    transition: background-color 0.3s;
-  }
-  nav ul li a:hover {
-    background: #8e44ad;
-    color: white;
-    text-shadow: 0 0 8px #9b59b6;
-  }
-
-  /* Sections */
-  section {
-    margin-bottom: 50px;
-  }
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    text-align: center;
-    text-shadow: 0 0 8px #8e44ad;
-  }
-  p, label {
-    font-size: 1rem;
-  }
-
-  /* Form styling */
-  form {
-    background: #111133;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px #8e44ad;
-  }
-  input[type="text"],
-  input[type="email"],
-  select,
-  textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 6px;
-    margin-bottom: 16px;
-    border: none;
-    border-radius: 8px;
-    background: #222244;
-    color: #eee;
-    font-size: 1rem;
-    resize: vertical;
-    transition: box-shadow 0.3s;
-  }
-  input[type="text"]:focus,
-  input[type="email"]:focus,
-  select:focus,
-  textarea:focus {
-    outline: none;
-    box-shadow: 0 0 10px #9b59b6;
-  }
-
   label {
     display: block;
-    margin-top: 10px;
+    margin-top: 1rem;
+    font-weight: 600;
   }
-
-  /* Priority colors */
-  .priority-low {
-    color: #2ecc71; /* zielony */
-    font-weight: bold;
-  }
-  .priority-normal {
-    color: #bdc3c7; /* szary */
-    font-weight: bold;
-  }
-  .priority-urgent {
-    color: #e74c3c; /* czerwony */
-    font-weight: bold;
-  }
-
-  /* Button */
-  button, input[type="submit"] {
-    background: #8e44ad;
+  input[type=text], input[type=email], select, textarea {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 5px;
     border: none;
-    color: white;
-    padding: 12px 25px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 0 12px #9b59b6;
-    transition: background-color 0.3s, box-shadow 0.3s;
-  }
-  button:hover, input[type="submit"]:hover {
-    background: #9b59b6;
-    box-shadow: 0 0 20px #b08ee5;
-  }
-  button:disabled {
-    background: #555555;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-
-  /* Spinner */
-  .spinner {
-    border: 4px solid #eee;
-    border-top: 4px solid #9b59b6;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    animation: spin 1s linear infinite;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  @keyframes spin {
-    0% {transform: rotate(0deg);}
-    100% {transform: rotate(360deg);}
-  }
-
-  /* Image previews */
-  #imagePreview {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-  }
-  #imagePreview img {
-    max-width: 100px;
-    border-radius: 8px;
-    box-shadow: 0 0 8px #9b59b6;
-  }
-
-  /* Animated highlight on buttons and links */
-  button:hover, a:hover {
-    animation: pulse 1.2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% {text-shadow: 0 0 8px #9b59b6;}
-    50% {text-shadow: 0 0 20px #e0aaff;}
-  }
-
-  /* Notification */
-  #notification {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: #8e44ad;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #9b59b6;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-    font-weight: bold;
-    z-index: 110;
-  }
-  #notification.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  /* FAQ styles */
-  .faq-item {
-    background: #222244;
-    padding: 15px;
-    margin-bottom: 12px;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 0 10px #8e44ad;
-    transition: background-color 0.3s;
-  }
-  .faq-item:hover {
-    background: #333366;
-  }
-  .faq-answer {
-    display: none;
-    margin-top: 8px;
-    color: #ccc;
-  }
-  .faq-item.active .faq-answer {
-    display: block;
-  }
-
-  /* Stats */
-  #stats {
-    display: flex;
-    justify-content: space-around;
-    text-align: center;
-    background: #111133;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #8e44ad;
-  }
-  #stats div {
-    flex: 1;
-  }
-  #stats div h3 {
-    font-size: 2.2rem;
-    margin-bottom: 5px;
-    color: #9b59b6;
-  }
-  #stats div p {
-    font-size: 1.1rem;
-    color: #ccc;
-  }
-
-  /* Copy Discord Link */
-  #copyDiscord {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  #copyDiscord input {
-    flex: 1;
-    background: #222244;
-    border-radius: 8px;
-    padding: 8px;
-    color: #eee;
-    border: none;
-  }
-  #copyDiscord button {
-    padding: 8px 15px;
     font-size: 1rem;
   }
-
-  /* Time and Date */
-  #timeDate {
-    text-align: center;
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    color: #bbb;
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    max-height: 150px;
   }
-
+  input[type=file] {
+    margin-top: 0.5rem;
+  }
+  button {
+    margin-top: 1.8rem;
+    background-color: #4caf50;
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #388e3c;
+  }
+  .alert {
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 5px;
+    font-weight: 700;
+  }
+  .alert.error {
+    background-color: #c62828;
+    color: white;
+  }
+  .alert.success {
+    background-color: #388e3c;
+    color: white;
+  }
+  .captcha-container {
+    margin-top: 1rem;
+    display: flex; align-items: center;
+    gap: 1rem;
+  }
+  .captcha-question {
+    font-weight: 700;
+  }
+  /* Responsywność */
+  @media (max-width: 600px) {
+    main {
+      margin: 1rem;
+      padding: 1rem;
+    }
+  }
 </style>
 </head>
 <body>
-
-<button id="sidebarToggle">☰ Menu</button>
-<button id="toggleTheme">Tryb Jasny</button>
-
-<nav id="sidebar">
-  <ul>
-    <li><a href="#formSection">Formularz</a></li>
-    <li><a href="#infoSection">Informacje</a></li>
-    <li><a href="#faqSection">FAQ</a></li>
-    <li><a href="#statsSection">Statystyki</a></li>
-  </ul>
-</nav>
-
-<div id="container">
-  <header>
-    <img src="https://i.imgur.com/QgCSy4d.png" alt="Logo Społeczności" />
-    <h1>Gaming Community</h1>
-    <p>Profesjonalny system zgłoszeń i wsparcia</p>
-  </header>
-
-  <div id="timeDate"></div>
-
-  <section id="formSection">
-    <h2>Formularz zgłoszenia</h2>
-    <form id="ticketForm" autocomplete="off">
-      <label for="username">Nick użytkownika:</label>
-      <input type="text" id="username" name="username" required maxlength="30" placeholder="Twój nick..." />
-
-      <label for="email">Email (opcjonalnie):</label>
-      <input type="email" id="email" name="email" placeholder="Twój email..." />
-
-      <label for="priority">Priorytet zgłoszenia:</label>
-      <select id="priority" name="priority" required>
-        <option value="low" class="priority-low">Niski (zielony)</option>
-        <option value="normal" selected class="priority-normal">Normalny (szary)</option>
-        <option value="urgent" class="priority-urgent">Pilny (czerwony)</option>
+<header>
+  <h1>PlotVenture - Formularz Zgłoszeń</h1>
+  <nav>
+    <a href="#" id="navHome">Strona Główna</a>
+    <a href="#" id="navForm">Zgłoś Problem</a>
+    <a href="#" id="navLogin">Zaloguj się</a>
+  </nav>
+</header>
+<main id="mainContent">
+  <!-- Strona startowa -->
+  <section id="homePage">
+    <h2>Witamy w systemie zgłoszeń PlotVenture</h2>
+    <p>Proszę się zalogować lub zarejestrować, aby wysłać zgłoszenie.</p>
+  </section>
+  <!-- Formularz zgłoszenia -->
+  <section id="formPage" style="display:none;">
+    <h2>Zgłoszenie problemu / rekrutacja / kontakt</h2>
+    <form id="reportForm" enctype="multipart/form-data" novalidate>
+      <label for="category">Kategoria zgłoszenia</label>
+      <select id="category" name="category" required>
+        <option value="">-- wybierz --</option>
+        <option value="problem">Błąd</option>
+        <option value="rekrutacja">Rekrutacja</option>
+        <option value="kontakt">Kontakt z administracją</option>
+        <option value="inne">Inne</option>
       </select>
 
-      <label for="message">Treść zgłoszenia (max 500 znaków):</label>
-      <textarea id="message" name="message" rows="5" maxlength="500" required placeholder="Opisz swój problem..."></textarea>
-      <div id="charCount">0 / 500</div>
+      <label for="name">Imię *</label>
+      <input type="text" id="name" name="name" placeholder="Twoje imię" pattern="^[A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż\- ]+$" title="Imię nie może zawierać cyfr ani znaków specjalnych" required />
 
-      <label>Dodaj załączniki (max 3 pliki, tylko obrazy lub PDF/ZIP):</label>
-      <input type="file" id="attachments" name="attachments" accept="image/*,application/pdf,application/zip" multiple />
+      <label for="email">Email *</label>
+      <input type="email" id="email" name="email" placeholder="Twój email" required />
 
-      <div id="imagePreview"></div>
+      <label for="message">Wiadomość (max 100 znaków) *</label>
+      <textarea id="message" name="message" maxlength="100" placeholder="Napisz swoją wiadomość" required></textarea>
 
-      <label id="quizQuestionLabel" style="margin-top:20px;">Quiz: Ile to 3 + 4?</label>
-      <input type="text" id="quizAnswer" placeholder="Podaj wynik" required />
-      <small id="quizTriesInfo" style="color:#ccc;">Pozostało prób: 3</small>
+      <label for="attachment">Załącznik (PNG max 8MB)</label>
+      <input type="file" id="attachment" name="attachment" accept="image/png" />
 
-      <input type="submit" id="submitBtn" value="Wyślij zgłoszenie" />
-      <span id="spinner" style="display:none;" class="spinner"></span>
+      <div class="captcha-container">
+        <span class="captcha-question" id="captchaQuestion">Ile to 3 + 4 ?</span>
+        <input type="number" id="captchaAnswer" name="captchaAnswer" placeholder="Twoja odpowiedź" required />
+      </div>
+
+      <button type="submit">Wyślij zgłoszenie</button>
+      <div id="formAlert" role="alert"></div>
     </form>
-
-    <div id="copyDiscord">
-      <input type="text" readonly value="https://discord.gg/7prNChKHnY" id="discordLink" />
-      <button id="copyBtn">Kopiuj link Discord</button>
-    </div>
   </section>
+  <!-- Logowanie -->
+  <section id="loginPage" style="display:none;">
+    <h2>Logowanie / Rejestracja</h2>
+    <form id="loginForm" novalidate>
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" name="loginEmail" required placeholder="Twój email" />
+      <label for="loginPassword">Hasło</label>
+      <input type="password" id="loginPassword" name="loginPassword" required placeholder="Twoje hasło" />
+      <button type="submit">Zaloguj się</button>
+    </form>
+    <p>Nie masz konta? <button id="showRegisterBtn" style="background:none;border:none;color:#4caf50;cursor:pointer;">Zarejestruj się</button></p>
 
-  <section id="infoSection">
-    <h2>Informacje</h2>
-    <p>System zgłoszeń jest w pełni automatyczny i chroniony przed spamem poprzez quiz matematyczny oraz limit zgłoszeń na godzinę. W zgłoszeniu widoczne będą: nick użytkownika, priorytet, czas zgłoszenia oraz treść wraz z załącznikami. Wszystkie zgłoszenia są przesyłane bezpośrednio do Discord webhook.</p>
+    <form id="registerForm" style="display:none;" novalidate>
+      <label for="regEmail">Email</label>
+      <input type="email" id="regEmail" name="regEmail" required placeholder="Twój email" />
+      <label for="regPassword">Hasło (min 6 znaków)</label>
+      <input type="password" id="regPassword" name="regPassword" required minlength="6" placeholder="Twoje hasło" />
+      <button type="submit">Zarejestruj się</button>
+    </form>
+    <div id="loginAlert" role="alert"></div>
   </section>
-
-  <section id="faqSection">
-    <h2>FAQ</h2>
-    <div class="faq-item">
-      <div class="faq-question">Jak długo trwa odpowiedź na zgłoszenie?</div>
-      <div class="faq-answer">Zazwyczaj odpowiedź następuje w ciągu 24 godzin, w zależności od priorytetu zgłoszenia.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-question">Czy mogę wysłać więcej niż jedno zgłoszenie?</div>
-      <div class="faq-answer">Tak, ale obowiązuje limit 1 zgłoszenia na godzinę, aby uniknąć spamu.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-question">Jakie pliki mogę załączyć?</div>
-      <div class="faq-answer">Akceptujemy obrazy, PDF i pliki ZIP, max 3 pliki na zgłoszenie.</div>
-    </div>
-  </section>
-
-  <section id="statsSection">
-    <h2>Statystyki</h2>
-    <div id="stats">
-      <div>
-        <h3 id="totalTickets">0</h3>
-        <p>Zgłoszeń ogółem</p>
-      </div>
-      <div>
-        <h3 id="activeUsers">0</h3>
-        <p>Aktywnych użytkowników</p>
-      </div>
-      <div>
-        <h3 id="pendingTickets">0</h3>
-        <p>Zgłoszeń oczekujących</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="socialMedia" style="text-align:center; margin-top: 40px;">
-    <h2>Znajdź nas w social media</h2>
-    <a href="https://facebook.com" target="_blank" aria-label="Facebook" title="Facebook" style="margin:0 10px; font-size: 2rem; color:#3b5998;">&#xf09a;</a>
-    <a href="https://youtube.com" target="_blank" aria-label="YouTube" title="YouTube" style="margin:0 10px; font-size: 2rem; color:#ff0000;">&#xf167;</a>
-    <a href="https://tiktok.com" target="_blank" aria-label="TikTok" title="TikTok" style="margin:0 10px; font-size: 2rem; color:#000000;">&#xe07b;</a>
-    <a href="https://instagram.com" target="_blank" aria-label="Instagram" title="Instagram" style="margin:0 10px; font-size: 2rem; color:#e1306c;">&#xf16d;</a>
-  </section>
-</div>
-
-<div id="notification"></div>
+</main>
 
 <script>
-  // Variables for theme and elements
-  const toggleThemeBtn = document.getElementById('toggleTheme');
-  const body = document.body;
-  const sidebarToggleBtn = document.getElementById('sidebarToggle');
-  const sidebar = document.getElementById('sidebar');
-  const form = document.getElementById('ticketForm');
-  const charCount = document.getElementById('charCount');
-  const messageInput = document.getElementById('message');
-  const attachmentsInput = document.getElementById('attachments');
-  const imagePreview = document.getElementById('imagePreview');
-  const quizQuestionLabel = document.getElementById('quizQuestionLabel');
-  const quizAnswer = document.getElementById('quizAnswer');
-  const quizTriesInfo = document.getElementById('quizTriesInfo');
-  const submitBtn = document.getElementById('submitBtn');
-  const spinner = document.getElementById('spinner');
-  const notification = document.getElementById('notification');
-  const discordLinkInput = document.getElementById('discordLink');
-  const copyBtn = document.getElementById('copyBtn');
-  const timeDateDisplay = document.getElementById('timeDate');
+  // Prosta nawigacja między sekcjami
+  const homePage = document.getElementById('homePage');
+  const formPage = document.getElementById('formPage');
+  const loginPage = document.getElementById('loginPage');
+  const navHome = document.getElementById('navHome');
+  const navForm = document.getElementById('navForm');
+  const navLogin = document.getElementById('navLogin');
 
-  // Discord webhook URL
-  const webhookURL = 'https://discord.com/api/webhooks/1389289861755699371/3kSC8ybs9rKAi4184SGxaTbkoQ3RZN5jzo4iA4IqU7X43wdOi6beIx6rMapjLZiJtS3q';
-
-  // Priority colors map
-  const priorityColors = {
-    low: '#2ecc71',
-    normal: '#bdc3c7',
-    urgent: '#e74c3c'
+  navHome.onclick = () => {
+    homePage.style.display = 'block';
+    formPage.style.display = 'none';
+    loginPage.style.display = 'none';
+  };
+  navForm.onclick = () => {
+    if (!isLoggedIn()) {
+      alert('Musisz się zalogować, aby wysłać zgłoszenie.');
+      showLogin();
+      return;
+    }
+    homePage.style.display = 'none';
+    formPage.style.display = 'block';
+    loginPage.style.display = 'none';
+  };
+  navLogin.onclick = () => {
+    showLogin();
   };
 
-  // Quiz questions pool
-  const quizQuestions = [
-    { q: "3 + 4", a: "7" },
-    { q: "5 - 2", a: "3" },
-    { q: "6 * 2", a: "12" },
-    { q: "10 / 2", a: "5" },
-    { q: "9 + 6", a: "15" },
-  ];
-
-  // State vars
-  let quizTriesLeft = 3;
-  let currentQuizIndex = 0;
-  let lastSubmissionTime = 0;
-
-  // Initialize theme from localStorage or default dark
-  function initTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    if(savedTheme === 'light') {
-      body.classList.add('light-theme');
-      toggleThemeBtn.textContent = "Tryb Ciemny";
-      body.style.backgroundColor = "#fafafa";
-      body.style.color = "#222";
-    }
+  function showLogin() {
+    homePage.style.display = 'none';
+    formPage.style.display = 'none';
+    loginPage.style.display = 'block';
   }
-  initTheme();
 
-  toggleThemeBtn.addEventListener('click', () => {
-    if(body.classList.contains('light-theme')) {
-      // switch to dark
-      body.classList.remove('light-theme');
-      toggleThemeBtn.textContent = "Tryb Jasny";
-      body.style.backgroundColor = "#0a0a1a";
-      body.style.color = "#eee";
-      localStorage.setItem('theme', 'dark');
+  // Logika rejestracji / logowania (prosta, localStorage)
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const showRegisterBtn = document.getElementById('showRegisterBtn');
+  const loginAlert = document.getElementById('loginAlert');
+
+  showRegisterBtn.onclick = () => {
+    registerForm.style.display = 'block';
+  };
+
+  function isLoggedIn() {
+    return !!localStorage.getItem('loggedUser');
+  }
+
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = e.target.loginEmail.value.trim().toLowerCase();
+    const pass = e.target.loginPassword.value;
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+    if(users[email] && users[email].password === pass){
+      localStorage.setItem('loggedUser', email);
+      loginAlert.textContent = 'Zalogowano pomyślnie!';
+      loginAlert.className = 'alert success';
+      showFormPage();
     } else {
-      // switch to light
-      body.classList.add('light-theme');
-      toggleThemeBtn.textContent = "Tryb Ciemny";
-      body.style.backgroundColor = "#fafafa";
-      body.style.color = "#222";
-      localStorage.setItem('theme', 'light');
+      loginAlert.textContent = 'Niepoprawny email lub hasło';
+      loginAlert.className = 'alert error';
     }
   });
 
-  // Sidebar toggle on mobile
-  sidebarToggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('show');
-  });
-
-  // Update character count
-  messageInput.addEventListener('input', () => {
-    charCount.textContent = `${messageInput.value.length} / 500`;
-  });
-
-  // Quiz question setup
-  function setQuizQuestion() {
-    currentQuizIndex = Math.floor(Math.random() * quizQuestions.length);
-    quizQuestionLabel.textContent = `Quiz: Ile to ${quizQuestions[currentQuizIndex].q}?`;
-    quizAnswer.value = '';
-  }
-  setQuizQuestion();
-
-  // Image preview handler
-  attachmentsInput.addEventListener('change', () => {
-    imagePreview.innerHTML = '';
-    const files = attachmentsInput.files;
-    if(files.length > 3) {
-      alert('Możesz dodać maksymalnie 3 pliki.');
-      attachmentsInput.value = '';
+  registerForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = e.target.regEmail.value.trim().toLowerCase();
+    const pass = e.target.regPassword.value;
+    if(pass.length < 6){
+      loginAlert.textContent = 'Hasło musi mieć minimum 6 znaków.';
+      loginAlert.className = 'alert error';
       return;
     }
-    for(let i=0; i<files.length; i++) {
-      const file = files[i];
-      if(!file.type.startsWith('image/') && file.type !== "application/pdf" && file.type !== "application/zip") {
-        alert('Akceptujemy tylko obrazy, PDF lub ZIP.');
-        attachmentsInput.value = '';
-        imagePreview.innerHTML = '';
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+    if(users[email]){
+      loginAlert.textContent = 'Użytkownik już istnieje.';
+      loginAlert.className = 'alert error';
+      return;
+    }
+    users[email] = {password: pass};
+    localStorage.setItem('users', JSON.stringify(users));
+    loginAlert.textContent = 'Rejestracja zakończona sukcesem! Możesz się teraz zalogować.';
+    loginAlert.className = 'alert success';
+    registerForm.style.display = 'none';
+  });
+
+  function showFormPage(){
+    homePage.style.display = 'none';
+    formPage.style.display = 'block';
+    loginPage.style.display = 'none';
+  }
+
+  // CAPTCHA proste (quiz matematyczny)
+  let captchaCorrectAnswer = null;
+  function generateCaptcha() {
+    const a = Math.floor(Math.random() * 10);
+    const b = Math.floor(Math.random() * 10);
+    captchaCorrectAnswer = a + b;
+    document.getElementById('captchaQuestion').textContent = `Ile to ${a} + ${b} ?`;
+  }
+  generateCaptcha();
+
+  // Formularz zgłoszenia
+  const reportForm = document.getElementById('reportForm');
+  const formAlert = document.getElementById('formAlert');
+
+  reportForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formAlert.textContent = '';
+    formAlert.className = '';
+
+    // Walidacja captcha
+    const captchaAnswer = Number(reportForm.captchaAnswer.value);
+    if(captchaAnswer !== captchaCorrectAnswer){
+      formAlert.textContent = 'Błędna odpowiedź CAPTCHA.';
+      formAlert.className = 'alert error';
+      generateCaptcha();
+      return;
+    }
+
+    // Walidacja załącznika
+    const fileInput = reportForm.attachment;
+    if(fileInput.files.length > 0){
+      const file = fileInput.files[0];
+      if(file.size > 8 * 1024 * 1024){
+        formAlert.textContent = 'Załącznik nie może być większy niż 8MB.';
+        formAlert.className = 'alert error';
         return;
       }
-      if(file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          img.alt = "Podgląd załącznika";
-          imagePreview.appendChild(img);
-        };
-        reader.readAsDataURL(file);
+      if(file.type !== 'image/png'){
+        formAlert.textContent = 'Załącznik musi być w formacie PNG.';
+        formAlert.className = 'alert error';
+        return;
       }
     }
-  });
 
-  // Copy Discord link
-  copyBtn.addEventListener('click', () => {
-    discordLinkInput.select();
-    discordLinkInput.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(discordLinkInput.value).then(() => {
-      showNotification('Link Discord skopiowany!');
-    });
-  });
-
-  // Show notification
-  function showNotification(message) {
-    notification.textContent = message;
-    notification.style.opacity = '1';
-    setTimeout(() => {
-      notification.style.opacity = '0';
-    }, 2500);
-  }
-
-  // Validate quiz answer
-  function validateQuizAnswer() {
-    const userAnswer = quizAnswer.value.trim();
-    const correctAnswer = quizQuestions[currentQuizIndex].a;
-    if(userAnswer === correctAnswer) {
-      return true;
-    } else {
-      quizTriesLeft--;
-      quizTriesInfo.textContent = `Pozostało prób: ${quizTriesLeft}`;
-      if(quizTriesLeft <= 0) {
-        submitBtn.disabled = true;
-        quizAnswer.disabled = true;
-        showNotification('Przekroczono liczbę prób w quizie!');
-      }
-      return false;
-    }
-  }
-
-  // Rate limit: 1 submission per hour
-  function canSubmit() {
-    const now = Date.now();
-    if(now - lastSubmissionTime < 3600000) { // 1 hour in ms
-      showNotification('Limit zgłoszeń to 1 na godzinę.');
-      return false;
-    }
-    return true;
-  }
-
-  // Form submission handler
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    if(!canSubmit()) return;
-
-    if(!validateQuizAnswer()) {
-      showNotification('Niepoprawny wynik quizu.');
+    // Sprawdzenie pola kategoria
+    if(reportForm.category.value === ''){
+      formAlert.textContent = 'Proszę wybrać kategorię zgłoszenia.';
+      formAlert.className = 'alert error';
       return;
     }
 
-    const formData = new FormData(form);
-    const message = formData.get('message').trim();
-    const priority = formData.get('priority');
-    const attachments = attachmentsInput.files;
+    // Wszystko OK — wysyłamy zgłoszenie do webhook Discord (bez załącznika)
+    const payload = {
+      content: `Nowe zgłoszenie:\n**Kategoria:** ${reportForm.category.value}\n**Imię:** ${reportForm.name.value}\n**Email:** ${reportForm.email.value}\n**Wiadomość:** ${reportForm.message.value}\n**Użytkownik:** ${localStorage.getItem('loggedUser') || 'niezalogowany'}`,
+      username: "PlotVenture Bot"
+    };
 
-    if(message.length === 0) {
-      showNotification('Wpisz treść zgłoszenia.');
-      return;
-    }
-
-    submitBtn.disabled = true;
-    spinner.style.display = 'inline-block';
-
-    // Prepare data for Discord webhook
-    const embeds = [{
-      title: `Nowe zgłoszenie [${priority.toUpperCase()}]`,
-      description: message,
-      color: priorityColors[priority],
-      timestamp: new Date().toISOString(),
-      footer: {
-        text: `Nick: ${formData.get('nickname')}`
-      }
-    }];
-
-    // Handle attachments upload if any (simulate or real depending on backend)
-    // For now, attachments are not uploaded, just mention count
-    if(attachments.length > 0) {
-      embeds[0].fields = [{
-        name: 'Załączniki',
-        value: `${attachments.length} plik(i) dołączono`
-      }];
-    }
-
-    // Send to Discord webhook
     try {
-      const response = await fetch(webhookURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ embeds })
+      await fetch("https://discord.com/api/webhooks/1389289861755699371/3kSC8ybs9rKAi4184SGxaTbkoQ3RZN5jzo4iA4IqU7X43wdOi6beIx6rMapjLZiJtS3q", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       });
 
-      if(response.ok) {
-        showNotification('Zgłoszenie wysłane pomyślnie!');
-        lastSubmissionTime = Date.now();
-        form.reset();
-        setQuizQuestion();
-        quizTriesLeft = 3;
-        quizTriesInfo.textContent = `Pozostało prób: ${quizTriesLeft}`;
-        submitBtn.disabled = false;
-        spinner.style.display = 'none';
-        charCount.textContent = '0 / 500';
-        imagePreview.innerHTML = '';
-      } else {
-        showNotification('Błąd podczas wysyłania zgłoszenia.');
-        submitBtn.disabled = false;
-        spinner.style.display = 'none';
-      }
-    } catch (error) {
-      showNotification('Błąd sieci podczas wysyłania zgłoszenia.');
-      submitBtn.disabled = false;
-      spinner.style.display = 'none';
+      formAlert.textContent = 'Zgłoszenie zostało wysłane. Dziękujemy!';
+      formAlert.className = 'alert success';
+      reportForm.reset();
+      generateCaptcha();
+    } catch(err) {
+      formAlert.textContent = 'Błąd podczas wysyłania zgłoszenia. Spróbuj ponownie później.';
+      formAlert.className = 'alert error';
     }
   });
 
-  // Display current time and date in footer
-  function updateTimeDate() {
-    const now = new Date();
-    timeDateDisplay.textContent = now.toLocaleString();
-  }
-  setInterval(updateTimeDate, 1000);
-  updateTimeDate();
 </script>
-
+</body>
+</html>
